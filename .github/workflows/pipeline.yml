@@ -1,0 +1,30 @@
+name: Simple MLOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  mlops:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Train model
+      run: python train.py
+
+    - name: Build Docker image
+      run: docker build -t simple-mlops .
+
+    - name: Run container test
+      run: docker run -d -p 8000:8000 simple-mlops
