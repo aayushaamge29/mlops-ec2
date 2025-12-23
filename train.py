@@ -1,11 +1,10 @@
 import os
 import mlflow
-import mlflow.sklearn
 from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 
-# 👇 IMPORTANT: local mlflow storage (CI-safe)
+# CI-safe local tracking
 mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("iris-mlops")
 
@@ -17,6 +16,10 @@ with mlflow.start_run():
 
     acc = model.score(X, y)
     mlflow.log_metric("accuracy", acc)
-    mlflow.sklearn.log_model(model, "model")
+    mlflow.log_param("model_type", "RandomForest")
 
+# ✅ Explicit artifact save (Docker-friendly)
+os.makedirs("app", exist_ok=True)
 joblib.dump(model, "app/model.pkl")
+
+print("Training completed, model saved to app/model.pkl")
