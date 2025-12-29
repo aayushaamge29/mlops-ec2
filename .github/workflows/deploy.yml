@@ -21,11 +21,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run unit tests
-      run: pytest -v
+    - name: Run unit tests with coverage gate
+      run: |
+        pytest --cov=app --cov-report=term-missing --cov-fail-under=80
 
   deploy:
-    needs: test   # 👈 VERY IMPORTANT
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
